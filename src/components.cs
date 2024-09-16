@@ -11,7 +11,7 @@ using Unity.IL2CPP.CompilerServices;
 #endif
 
 namespace Leopotam.EcsLite {
-    public interface IEcsPool {
+    public interface IEcsPool : IEcsPoolRawAccess {
         void Resize (int capacity);
         bool Has (int entity);
         void Del (int entity);
@@ -22,13 +22,21 @@ namespace Leopotam.EcsLite {
         Type GetComponentType ();
         void Copy (int srcEntity, int dstEntity);
     }
-
+    
     public interface IEcsAutoReset<T> where T : struct {
         void AutoReset (ref T c);
     }
 
     public interface IEcsAutoCopy<T> where T : struct {
         void AutoCopy (ref T src, ref T dst);
+    }
+
+    public interface IEcsPoolRawAccess {
+        object[] GetDenseItems ();
+        int[] GetSparseItems ();
+        int GetDenseItemCount ();
+        int[] GetRecycledItems ();
+        int GetRecycledItemCount ();
     }
 
 #if ENABLE_IL2CPP
@@ -155,6 +163,30 @@ namespace Leopotam.EcsLite {
 #endif
             ref var data = ref Add (entity);
             data = (T) dataRaw;
+        }
+
+        object[] IEcsPoolRawAccess.GetDenseItems() {
+            var array = new object[_denseItemsCount];
+            for (int i = 0; i < _denseItemsCount; i++) {
+                array[i] = _denseItems[i];
+            }
+            return array;
+        }
+        
+        int[] IEcsPoolRawAccess.GetSparseItems() {
+            return _sparseItems;
+        }
+        
+        int IEcsPoolRawAccess.GetDenseItemCount() {
+            return _denseItemsCount;
+        }
+        
+        int[] IEcsPoolRawAccess.GetRecycledItems() {
+            return _recycledItems;
+        }
+        
+        int IEcsPoolRawAccess.GetRecycledItemCount() {
+            return _recycledItemsCount;
         }
 
         public T[] GetRawDenseItems () {
