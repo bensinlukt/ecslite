@@ -1,4 +1,7 @@
-﻿namespace Leopotam.EcsLite {
+﻿using System;
+
+namespace Leopotam.EcsLite {
+    [Serializable]
     public sealed class SerializedEcsWorld {
         public short[] Entities { get; set; }
         public int EntitiesItemSize { get; set; }
@@ -24,6 +27,7 @@
         }
     }
 
+    [Serializable]
     public sealed class SerializedEcsPool {
         public string Type { get; set; }
         public short Id { get; set; }
@@ -43,7 +47,8 @@
             RecycledItemsCount = pool.GetRecycledItemCount();
         }
     }
-
+    
+    [Serializable]
     public sealed class SerializedEcsEntity {
         public int Id { get; set; }
         public int Gen { get; set; }
