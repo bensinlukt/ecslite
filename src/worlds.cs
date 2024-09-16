@@ -250,6 +250,16 @@ namespace Leopotam.EcsLite {
             return _entities;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int[] GetRecycledEntities() {
+            return _recycledEntities;
+        }
+        
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public int GetRecycledEntitiesCount () {
+            return _recycledEntitiesCount;
+        }
+
         public EcsPool<T> GetPool<T> () where T : struct {
             var poolType = typeof (T);
             if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
