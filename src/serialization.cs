@@ -11,6 +11,8 @@ namespace Leopotam.EcsLite {
         public SerializedEcsPool[] Pools { get; set; }
         public short PoolsCount { get; set; }
 
+        private SerializedEcsWorld() { }
+
         public SerializedEcsWorld(in EcsWorld world) {
             Entities = world.GetRawEntities();
             EntitiesItemSize = world.GetRawEntityItemSize();
@@ -37,6 +39,8 @@ namespace Leopotam.EcsLite {
         public int[] RecycledItems { get; set; }
         public int RecycledItemsCount { get; set; }
 
+        private SerializedEcsPool() { }
+
         public SerializedEcsPool(in IEcsPool pool) {
             Type = pool.GetComponentType().FullName;
             Id = (short)pool.GetId();
@@ -52,6 +56,8 @@ namespace Leopotam.EcsLite {
     public sealed class SerializedEcsEntity {
         public int Id { get; set; }
         public int Gen { get; set; }
+
+        private SerializedEcsEntity() { }
         
         public SerializedEcsEntity(in EcsPackedEntity entity) {
             Id = entity.Id;
