@@ -50,6 +50,12 @@ namespace Leopotam.EcsLite {
             RecycledItems = pool.GetRecycledItems();
             RecycledItemsCount = pool.GetRecycledItemCount();
         }
+
+        public IEcsPool ToPool(EcsWorld world) {
+            var type = System.Type.GetType(Type);
+            var pool = Activator.CreateInstance(type, new object[] { world, this });
+            return pool as IEcsPool;
+        }
     }
     
     [Serializable]

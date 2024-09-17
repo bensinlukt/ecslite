@@ -92,6 +92,7 @@ namespace Leopotam.EcsLite {
 #endif
                     autoResetMethod);
             }
+            
             // autocopy init.
             var isAutoCopy = typeof (IEcsAutoCopy<T>).IsAssignableFrom (_type);
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
@@ -116,6 +117,15 @@ namespace Leopotam.EcsLite {
 #endif
                     copyMethod);
             }
+        }
+        
+        internal EcsPool (in EcsWorld world, in SerializedEcsPool pool) : this (world, pool.Id, pool.DenseItems.Length, pool.SparseItems.Length, pool.RecycledItems.Length) {
+            Array.Copy(pool.DenseItems, _denseItems, pool.DenseItems.Length);
+            Array.Copy(pool.SparseItems, _sparseItems, pool.SparseItems.Length);
+            Array.Copy(pool.RecycledItems, _recycledItems, pool.RecycledItems.Length);
+            
+            _denseItemsCount = pool.DenseItemsCount;
+            _recycledItemsCount = pool.RecycledItemsCount;
         }
 
 #if UNITY_2020_3_OR_NEWER
