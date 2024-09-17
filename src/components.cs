@@ -34,7 +34,7 @@ namespace Leopotam.EcsLite {
     public interface IEcsPoolRawAccess {
         object[] GetDenseItems ();
         int[] GetSparseItems ();
-        int GetDenseItemCount ();
+        int GetDenseItemsCount ();
         int[] GetRecycledItems ();
         int GetRecycledItemCount ();
     }
@@ -119,7 +119,11 @@ namespace Leopotam.EcsLite {
             }
         }
         
-        internal EcsPool (in EcsWorld world, in SerializedEcsPool pool) : this (world, pool.Id, pool.DenseItems.Length, pool.SparseItems.Length, pool.RecycledItems.Length) {
+        public EcsPool (EcsWorld world, SerializedEcsPool pool) : this (world, pool.Id, pool.DenseItems.Length, pool.SparseItems.Length, pool.RecycledItems.Length) {
+            Array.Resize(ref _denseItems, pool.DenseItems.Length);
+            Array.Resize(ref _sparseItems, pool.SparseItems.Length);
+            Array.Resize(ref _recycledItems, pool.RecycledItems.Length);
+            
             Array.Copy(pool.DenseItems, _denseItems, pool.DenseItems.Length);
             Array.Copy(pool.SparseItems, _sparseItems, pool.SparseItems.Length);
             Array.Copy(pool.RecycledItems, _recycledItems, pool.RecycledItems.Length);
@@ -187,7 +191,7 @@ namespace Leopotam.EcsLite {
             return _sparseItems;
         }
         
-        int IEcsPoolRawAccess.GetDenseItemCount() {
+        int IEcsPoolRawAccess.GetDenseItemsCount() {
             return _denseItemsCount;
         }
         

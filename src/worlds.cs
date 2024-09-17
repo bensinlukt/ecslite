@@ -112,31 +112,27 @@ namespace Leopotam.EcsLite {
             _destroyed = false;
         }
 
-        public EcsWorld(in SerializedEcsWorld world, in Config cfg = default) : this (cfg) {
-            if (world.Entities.Length > _entities.Length) {
-                Array.Resize(ref _entities, world.Entities.Length);
-            }
-            
-            if (world.RecycledEntities.Length > _recycledEntities.Length) {
-                Array.Resize(ref _recycledEntities, world.RecycledEntities.Length);
-            }
-            
-            if (world.Pools.Length > _pools.Length) {
-                Array.Resize(ref _pools, world.Pools.Length);
-            }
-            
+        public EcsWorld(in SerializedEcsWorld world, in Config cfg = default) : this(cfg) {
+            Array.Resize(ref _entities, world.Entities.Length);
+            Array.Resize(ref _recycledEntities, world.RecycledEntities.Length);
+            Array.Resize(ref _pools, world.Pools.Length);
+
             Array.Copy(world.Entities, _entities, world.Entities.Length);
             Array.Copy(world.RecycledEntities, _recycledEntities, world.RecycledEntities.Length);
 
             var newPools = new IEcsPool[world.Pools.Length];
             for (var i = 0; i < newPools.Length; i++) {
                 newPools[i] = world.Pools[i].ToPool(this);
+
+                var rawAccess = newPools[i] as IEcsPoolRawAccess;
+                _poolHashes[newPools[i].GetComponentType()] = newPools[i];
             }
-            Array.Copy(world.Pools, _pools, world.Pools.Length);
-            
+            Array.Copy(newPools, _pools, newPools.Length);
+
             _entitiesCount = world.EntitiesCount;
             _recycledEntitiesCount = world.RecycledEntitiesCount;
             _poolsCount = world.PoolsCount;
+            _entitiesItemSize = world.EntitiesItemSize;
         }
 
         public void Destroy () {

@@ -16,7 +16,7 @@ namespace Leopotam.EcsLite {
         public SerializedEcsWorld(in EcsWorld world) {
             Entities = world.GetRawEntities();
             EntitiesItemSize = world.GetRawEntityItemSize();
-            EntitiesCount = world.GetEntitiesCount();
+            EntitiesCount = world.GetUsedEntitiesCount();
             RecycledEntities = world.GetRecycledEntities();
             RecycledEntitiesCount = world.GetRecycledEntitiesCount();
             IEcsPool[] pools = null;
@@ -42,18 +42,22 @@ namespace Leopotam.EcsLite {
         private SerializedEcsPool() { }
 
         public SerializedEcsPool(in IEcsPool pool) {
-            Type = pool.GetComponentType().FullName;
+            Type = pool.GetComponentType().AssemblyQualifiedName;
             Id = (short)pool.GetId();
             DenseItems = pool.GetDenseItems();
             SparseItems = pool.GetSparseItems();
-            DenseItemsCount = pool.GetDenseItemCount();
+            DenseItemsCount = pool.GetDenseItemsCount();
             RecycledItems = pool.GetRecycledItems();
             RecycledItemsCount = pool.GetRecycledItemCount();
         }
 
         public IEcsPool ToPool(EcsWorld world) {
             var type = System.Type.GetType(Type);
-            var pool = Activator.CreateInstance(type, new object[] { world, this });
+            if (type == null) {
+                throw new Exception($"Can't find type: \"{Type}\"");
+            }
+            var poolType = typeof(EcsPool<>).MakeGenericType(type);
+            var pool = Activator.CreateInstance(poolType, world, this);
             return pool as IEcsPool;
         }
     }
