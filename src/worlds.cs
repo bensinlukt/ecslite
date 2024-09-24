@@ -488,7 +488,9 @@ namespace Leopotam.EcsLite {
                     foreach (var filter in includeList) {
                         if (IsMaskCompatible (filter.GetMask (), entity)) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                            if (filter.SparseEntities[entity] > 0) { throw new Exception ("Entity already in filter."); }
+                            if (filter.SparseEntities[entity] > 0) {
+                                throw new Exception ($"Entity already in filter.\n{filter.ToDebugString()}");
+                            }
 #endif
                             filter.AddEntity (entity);
                         }
@@ -498,7 +500,9 @@ namespace Leopotam.EcsLite {
                     foreach (var filter in excludeList) {
                         if (IsMaskCompatibleWithout (filter.GetMask (), entity, componentType)) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                            if (filter.SparseEntities[entity] == 0) { throw new Exception ("Entity not in filter."); }
+                            if (filter.SparseEntities[entity] == 0) {
+                                throw new Exception ($"Entity not in filter.\n{filter.ToDebugString()}");
+                            }
 #endif
                             filter.RemoveEntity (entity);
                         }
@@ -510,7 +514,9 @@ namespace Leopotam.EcsLite {
                     foreach (var filter in includeList) {
                         if (IsMaskCompatible (filter.GetMask (), entity)) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                            if (filter.SparseEntities[entity] == 0) { throw new Exception ("Entity not in filter."); }
+                            if (filter.SparseEntities[entity] == 0) {
+                                throw new Exception ($"Entity not in filter.\n{filter.ToDebugString()}");
+                            }
 #endif
                             filter.RemoveEntity (entity);
                         }
@@ -520,7 +526,9 @@ namespace Leopotam.EcsLite {
                     foreach (var filter in excludeList) {
                         if (IsMaskCompatibleWithout (filter.GetMask (), entity, componentType)) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                            if (filter.SparseEntities[entity] > 0) { throw new Exception ("Entity already in filter."); }
+                            if (filter.SparseEntities[entity] > 0) {
+                                throw new Exception ($"Entity already in filter.\n{filter.ToDebugString()}");
+                            }
 #endif
                             filter.AddEntity (entity);
                         }

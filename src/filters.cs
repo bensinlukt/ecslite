@@ -4,6 +4,7 @@
 // ----------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 #if ENABLE_IL2CPP
@@ -151,6 +152,7 @@ namespace Leopotam.EcsLite {
             if (_lockCount <= 0) { throw new Exception ($"Invalid lock-unlock balance for \"{GetType ().Name}\"."); }
 #endif
             _lockCount--;
+            
             if (_lockCount == 0 && _delayedOpsCount > 0) {
                 for (int i = 0, iMax = _delayedOpsCount; i < iMax; i++) {
                     ref var op = ref _delayedOps[i];
@@ -177,6 +179,12 @@ namespace Leopotam.EcsLite {
             }
         }
 #endif
+
+        public string ToDebugString() {
+            var inc = string.Join(", ", _mask.Include.Take(_mask.IncludeCount).Select(x => _world.GetPoolById(x).GetType().GetGenericArguments()[0]));
+            var exc = string.Join(", ", _mask.Exclude.Take(_mask.ExcludeCount).Select(x => _world.GetPoolById(x).GetType().GetGenericArguments()[0]));
+            return $"EcsFilter[{_mask.Hash}] with {_lockCount} locks, {_entitiesCount} entities, and {_delayedOpsCount} delayed ops:\nInc: {inc}\nExc: {exc}";
+        }
 
         public struct Enumerator : IDisposable {
             readonly EcsFilter _filter;
